@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Completo: TCE-GO (Técnico de TI)</title>
+    <style>
+        :root {
+            --primary: #f97316;       /* Laranja vibrante */
+            --primary-dark: #c2410c;  /* Laranja escuro */
+            --bg-color: #0f172a;      /* Fundo escuro (Slate 900) */
+            --card-bg: #1e293b;       /* Fundo dos cards (Slate 800) */
+            --text-main: #f8fafc;     /* Texto claro */
+            --text-muted: #94a3b8;    /* Texto cinza/médio */
+            --border: #334155;        /* Borda escura */
+            --success: #22c55e;       /* Verde sucesso */
+            --danger: #ef4444;        /* Vermelho */
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-dark), #ea580c);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.8rem;
+        }
+
+        header p {
+            margin: 0;
+            opacity: 0.95;
+            font-size: 1rem;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background-color: var(--card-bg);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 0.6rem 1.2rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background-color: var(--primary);
+            color: #ffffff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+        }
+
+        h2 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+        }
+
+        h3 {
+            color: #fb923c;
+            margin-top: 1.2rem;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* Checklist Styles */
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 1.2rem;
+            height: 1.2rem;
+            margin-top: 0.2rem;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .checklist-item label {
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .checklist-item input[type="checkbox"]:checked + label {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .progress-bar-container {
+            background: var(--border);
+            border-radius: 8px;
+            height: 14px;
+            width: 100%;
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background-color: var(--success);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-weight: bold;
+            text-align: right;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        /* Timeline Styles */
+        .timeline-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .timeline-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.2rem;
+            border-left: 5px solid var(--primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            border: 1px solid var(--border);
+        }
+
+        .timeline-card h4 {
+            margin-top: 0;
+            color: var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .timeline-card span.badge {
+            background-color: #334155;
+            color: #fb923c;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .timeline-card ul {
+            padding-left: 1.2rem;
+            margin: 0.5rem 0 0 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .timeline-card li {
+            margin-bottom: 0.3rem;
+        }
+
+        /* Formulários e Tabelas (Erros e Simulados) */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-weight: bold;
+            color: #fb923c;
+            font-size: 0.9rem;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 0.7rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: #0f172a;
+            color: white;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+
+        th {
+            background-color: #334155;
+            color: #fb923c;
+        }
+
+        .delete-btn {
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Painel Completo: TCE-GO (Técnico de TI)</h1>
+        <p>Checklist Consolidado, Calendário Detalhado, Caderno de Erros e Simulados</p>
+    </header>
+
+    <div class="container">
+        <!-- Navegação por Abas -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('checklist')">Checklist Oficial</button>
+            <button class="tab-btn" onclick="switchTab('macrocalendar')">Calendário Macro</button>
+            <button class="tab-btn" onclick="switchTab('errors')">Caderno de Erros</button>
+            <button class="tab-btn" onclick="switchTab('simulados')">Simulados</button>
+            <button class="tab-btn" onclick="switchTab('dailyroutine')">Rotina 7h</button>
+        </div>
+
+        <!-- ABA 1: CHECKLIST CONSOLIDADO -->
+        <div id="checklist" class="tab-content active">
+            <div class="progress-text" id="progressText">Progresso Total: 0%</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <!-- CONHECIMENTOS GERAIS -->
+            <div class="card">
+                <h2>1. CONHECIMENTOS GERAIS (Peso 1)</h2>
+
+                <h3>Língua Portuguesa</h3>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Redação Oficial; Ortografia e acentuação; Emprego do sinal indicativo de crase[cite: 25].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Compreensão e interpretação de textos de gêneros variados; Relação do texto com seu contexto histórico[cite: 25].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Denotação e conotação; Discurso direto, indireto e indireto livre; Intertextualidade; Figuras de linguagem[cite: 25].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Morfossintaxe; Elementos estruturais e processos de formação de palavras; Sinonímia e antonímia[cite: 25].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Pontuação; Pronomes; Concordância nominal e verbal; Flexão nominal e verbal; Vozes do verbo[cite: 25].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Correlação de tempos e modos verbais; Regência nominal e verbal; Coordenação, subordinação e conectivos[cite: 25].</label></div>
+
+                <h3>Matemática e Raciocínio Lógico</h3>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Números inteiros e racionais (operações, expressões, múltiplos, divisores); Frações[cite: 25].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Grandezas proporcionais, razão e proporção, divisão proporcional, regra de três simples e composta[cite: 25].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Porcentagem, acréscimos e descontos[cite: 25].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Raciocínio Lógico: Estrutura lógica de relações arbitrárias, dedução de novas informações e avaliação de condições[cite: 25].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Raciocínio verbal, matemático, sequencial, orientação espacial/temporal, formação de conceitos e discriminação de elementos[cite: 25].</label></div>
+
+                <h3>Legislação Institucional</h3>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>CF/88: Administração Pública, fiscalização contábil, financeira, orçamentária, operacional e patrimonial; controle interno e externo[cite: 25].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Constituição do Estado de Goiás: disposições relativas ao TCE-GO[cite: 25].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Lei Orgânica do TCE-GO (Lei Estadual nº 16.168/2007) e Regimento Interno (Resolução nº 22/2008)[cite: 25].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Plano de Cargos, Carreiras e Remuneração (Lei Estadual nº 15.122/2005) e Regime Jurídico dos Servidores de GO (Lei nº 20.756/2020)[cite: 25].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Código de Ética dos Servidores do TCE-GO[cite: 25].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Resoluções Normativas e Administrativas institucionais (Res. Adm. nº 14/2025, Res. Adm. nº 17/2024, Res. Normativa nº 5/2024, Res. Adm. nº 24/2024, Res. Adm. nº 5/2024, Res. Adm. nº 19/2024 e Res. Adm. nº 15/2024)[cite: 25].</label></div>
+            </div>
+
+            <!-- CONHECIMENTOS ESPECÍFICOS - TI -->
+            <div class="card">
+                <h2>2. CONHECIMENTOS ESPECÍFICOS - TI (Peso 2 - Total: 45 Questões)</h2>
+
+                <h3>Engenharia de Software</h3>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Fundamentos, ciclo de vida (preditiva, iterativa, incremental, adaptativa/ágil)[cite: 26].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Abordagens ágeis: Scrum, Kanban, Lean Software Development e XP[cite: 26].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Requisitos (funcionais e não funcionais), histórias de usuário, casos de uso e critérios de aceite[cite: 26].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Arquitetura (camadas, SOA, microsserviços, orientada a eventos); Princípios SOLID, DRY, KISS, YAGNI, coesão e acoplamento[cite: 26].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>UML, BPMN, Design Patterns (criacionais, estruturais, comportamentais), Qualidade, Testes de software e Refatoração/Dívida técnica[cite: 26].</label></div>
+
+                <h3>Desenvolvimento de Sistemas</h3>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Algoritmos, lógica, estruturas de dados, POO e programação funcional[cite: 26].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Linguagens e ecossistemas: Java (básico), JavaScript/Node.js, React, Python, TypeScript, HTML5 e CSS3[cite: 26].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>APIs RESTful, GraphQL, WebSockets, JSON, XML e OpenAPI/Swagger[cite: 26].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Autenticação e Identidade: OAuth 2.0, OIDC, JWT[cite: 26].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Controle de versão com Git e gerenciamento de dependências[cite: 26].</label></div>
+
+                <h3>Engenharia de Software Assistida por IA e Sistemas Agentivos</h3>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>IA aplicada ao desenvolvimento, LLMs, Programação baseada em intenção e desenvolvimento orientado a linguagem natural[cite: 26].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Engenharia de contexto e de prompts aplicada a código[cite: 26].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Sistemas agentivos: Claude Code, Antigravity CLI e assistentes de codificação[cite: 26].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Ciclo agentivo (descoberta, planejamento, execução, self-healing), RAG, bancos vetoriais, Model Context Protocol (MCP) e ética/segurança no código gerado por IA[cite: 26].</label></div>
+
+                <h3>DevOps, Plataforma de Desenvolvimento e Engenharia de Entrega</h3>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>CI/CD, automação de build e testes, infraestrutura como código[cite: 26].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Observabilidade (métricas, logs, traces, telemetria)[cite: 26].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Git Avançado, GitHub, GitLab, Git Flow, Trunk-based development e Code Review[cite: 26].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Docker, Docker Compose, Kubernetes, GitHub Actions e Jenkins[cite: 26].</label></div>
+
+                <h3>Banco de Dados</h3>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Modelagem (DER, normalização/desnormalização), SQL, álgebra relacional, ACID e índices[cite: 26].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Procedures, triggers, views, PostgreSQL e Oracle Database[cite: 26].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>NoSQL (documentos, chave-valor, wide-column, grafos - MongoDB e Redis), bancos vetoriais (embeddings), replicação, backup e alta disponibilidade[cite: 26].</label></div>
+
+                <h3>Inteligência Artificial, Ciência de Dados e Automação</h3>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Machine learning (supervisionado, não supervisionado, por reforço), redes neurais e Deep Learning[cite: 26].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>IA Generativa, agentes inteligentes, multimodais e RAG[cite: 26].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Pipelines ETL/ELT, Data Warehouse, Data Lake, Big Data e Estratégia Brasileira de IA[cite: 26].</label></div>
+
+                <h3>Segurança da Informação</h3>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Princípios de SI (CID), gestão de riscos e incidentes, classificação da informação, IAM e controle de acesso[cite: 26].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Criptografia simétrica/assimétrica, ICP-Brasil, certificados e assinaturas digitais[cite: 26].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>OWASP Top 10:2025, DevSecOps, Zero Trust, ISO/IEC 27000, pentest e análise de vulnerabilidades[cite: 26].</label></div>
+
+                <h3>Sistemas Operacionais, Redes e Computação em Nuvem</h3>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Windows e Linux (gerenciamento de processos, memória, shell/PowerShell, Active Directory e LDAP)[cite: 27].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Redes: TCP/IP, IPv4/IPv6, DNS, DHCP, HTTP/2, HTTP/3, HTTPS, SSH, VPNs, firewalls e balanceamento de carga[cite: 27].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Cloud Computing: IaaS, PaaS, SaaS, serverless, alta disponibilidade e integração multicloud[cite: 27].</label></div>
+
+                <h3>Governança de Tecnologia da Informação</h3>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>COBIT 2019, ITIL v4 e ISO/IEC 38500:2024[cite: 27].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>PMBOK 8ª edição, PETI, gestão de portfólio/ativos e contratações de TIC (Lei nº 14.133/2021)[cite: 27].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Governo Digital: Lei nº 14.129/2021 e Estratégia Nacional de Governo Digital (ENGD)[cite: 27].</label></div>
+
+                <h3>Legislação Aplicada à Tecnologia da Informação</h3>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>LGPD (Lei nº 13.709/2018) aplicada a sistemas (privacy by design, anonimização)[cite: 27].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Marco Civil da Internet (Lei nº 12.965/2014) e certificação digital[cite: 27].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Normas internas do TCE-GO: Resolução Normativa nº 13/2016 (CETI), Resolução Adm. nº 14/2024, Resolução Adm. nº 17/2024, Resolução Adm. nº 14/2025 e PDTI 2025-2026[cite: 27].</label></div>
+
+                <h3>Língua Inglesa (Leitura Técnica) & Prova Discursiva</h3>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Compreensão de textos técnicos, manuais e documentações de software em inglês[cite: 27].</label></div>
+                <div class="checklist-item"><input type="checkbox" class="chk"><label>Prova Discursiva - Estudo de Caso prático sobre os conhecimentos específicos de TI[cite: 27].</label></div>
+            </div>
+        </div>
+
+        <!-- ABA 2: CALENDÁRIO MACRO (DE HOJE ATÉ A PROVA) -->
+        <div id="macrocalendar" class="tab-content">
+            <div class="card">
+                <h2>Calendário por Semana (Até 17 de Janeiro de 2027)[cite: 28]</h2>
+                <p>Distribuição sequencial detalhada por metas de estudo baseada no edital oficial:</p>
+            </div>
+
+            <div class="timeline-grid">
+                <div class="timeline-card">
+                    <h4>Semana 1 (12/10 a 18/10/2026) <span class="badge">Bloco 1: Fundamentação</span></h4>
+                    <ul>
+                        <li><strong>Foco:</strong> Sistemas Operacionais, Redes e Computação em Nuvem[cite: 27].</li>
+                        <li><strong>Meta:</strong> Modelos TCP/IP, Linux/Windows Server, Active Directory e Cloud Computing[cite: 27].</li>
+                    </ul>
+                </div>
+                <div class="timeline-card">
+                    <h4>Semana 2 (19/10 a 25/10/2026) <span class="badge">Bloco 1: Fundamentação</span></h4>
+                    <ul>
+                        <li><strong>Foco:</strong> Banco de Dados[cite: 26].</li>
+                        <li><strong>Meta:</strong> DER, normalização, SQL, PostgreSQL, Oracle, NoSQL e bancos vetoriais[cite: 26].</li>
+                    </ul>
+                </div>
+                <div class="timeline-card">
+                    <h4>Semana 3 (26/10 a 01/11/2026) <span class="badge">Bloco 1: Fundamentação</span></h4>
+                    <ul>
+                        <li><strong>Foco:</strong> Desenvolvimento de Sistemas[cite: 26].</li>
+                        <li><strong>Meta:</strong> POO, APIs REST, Microsserviços, OAuth/JWT e padrões SOLID[cite: 26].</li>
+                    </ul>
+                </div>
+                <div class="timeline-card">
+                    <h4>Semana 4 (02/11 a 08/11/2026) <span class="badge">Bloco 2: Engenharia Moderna</span></h4>
+                    <ul>
+                        <li><strong>Foco:</strong> Engenharia de Software[cite: 26].</li>
+                        <li><strong>Meta:</strong> Ciclo de vida, métodos ágeis (Scrum/Kanban), requisitos e testes[cite: 26].</li>
+                    </ul>
+                </div>
+                <div class="timeline-card">
+                    <h4>Semana 5 (09/11 a 15/11/2026) <span class="badge">Bloco 2: Engenharia Moderna</span></h4>
+                    <ul>
+                        <li><strong>Foco:</strong> Engenharia Assistida por IA e Sistemas Agentivos[cite: 26].</li>
+                        <li><strong>Meta:</strong> LLMs, prompt engineering, Claude Code, agentes autônomos e RAG[cite: 26].</li>
+                    </ul>
+                </div>
+                <div class="timeline-card">
+                    <h4>Semana 6 (16/11 a 22/11/2026) <span class="badge">Bloco 2: Engenharia Moderna</span></h4>
+                    <ul>
+                        <li><strong>Foco:</strong> DevOps e Engenharia de Entrega[cite: 26].</li>
+                        <li><strong>Meta:</strong> CI/CD, Docker, Kubernetes, Terraform e observabilidade[cite: 26].</li>
+                    </ul>
+                </div>
+                <div class="timeline-card">
+                    <h4>Semana 7 (23/11 a 29/11/2026) <span class="badge">Bloco 2: Engenharia Moderna</span></h4>
+                    <ul>
+                        <li><strong>Foco:</strong> Inteligência Artificial e Ciência de Dados[cite: 26, 27].</li>
+                        <li><strong>Meta:</strong> Machine Learning, pipelines ETL, Data Lake e Big Data[cite: 26, 27].</li>
+                    </ul>
+                </div>
+                <div class="timeline-card">
+                    <h4>Semana 8 (30/11 a 06/12/2026) <span class="badge">Bloco 3: Governança & Segurança</span></h4>
+                    <ul>
+                        <li><strong>Foco:</strong> Governança de TI[cite: 27].</li>
+                        <li><strong>Meta:</strong> COBIT 2019, ITIL v4, PMBOK e licitações de TIC (Lei 14.133)[cite: 27].</li>
+                    </ul>
+                </div>
+                <div class="timeline-card">
+                    <h4>Semana 9 (07/12 a 13/12/2026) <span class="badge">Bloco 3: Governança & Segurança</span></h4>
+                    <ul>
+                        <li><strong>Foco:</strong> Segurança da Informação[cite: 26].</li>
+                        <li><strong>Meta:</strong> Criptografia, ISO 27000, OWASP Top 10 e Zero Trust[cite: 26].</li>
+                    </ul>
+                </div>
+                <div class="timeline-card">
+                    <h4>Semana 10 (14/12 a 20/12/2026) <span class="badge">Bloco 3: Governança & Segurança</span></h4>
+                    <ul>
+                        <li><strong>Foco:</strong> Legislação Aplicada à TI e Normas do TCE-GO[cite: 27].</li>
+                        <li><strong>Meta:</strong> LGPD, Marco Civil, resoluções normativas e PDTI do Tribunal[cite: 27].</li>
+                    </ul>
+                </div>
+                <div class="timeline-card">
+                    <h4>Semana 11 (21/12 a 27/12/2026) <span class="badge">Bloco 4: Gerais e Institucionais</span></h4>
+                    <ul>
+                        <li><strong>Foco:</strong> Legislação Institucional do TCE-GO[cite: 25].</li>
+                        <li><strong>Meta:</strong> Constituição, Lei Orgânica (Lei 16.168), Regimento Interno e resoluções[cite: 25].</li>
+                    </ul>
+                </div>
+                <div class="timeline-card">
+                    <h4>Semana 12 (28/12/2026 a 03/01/2027) <span class="badge">Bloco 4: Gerais e Institucionais</span></h4>
+                    <ul>
+                        <li><strong>Foco:</strong> Língua Portuguesa e Inglês Técnico[cite: 25, 27].</li>
+                        <li><strong>Meta:</strong> Sintaxe, coesão, interpretação e vocabulário técnico em inglês[cite: 25, 27].</li>
+                    </ul>
+                </div>
+                <div class="timeline-card">
+                    <h4>Semana 13 (04/01 a 10/01/2027) <span class="badge">Bloco 4: Gerais e Institucionais</span></h4>
+                    <ul>
+                        <li><strong>Foco:</strong> Matemática e Raciocínio Lógico[cite: 25].</li>
+                        <li><strong>Meta:</strong> Lógica proposicional, proporção, regra de três e análise combinatória[cite: 25].</li>
+                    </ul>
+                </div>
+                <div class="timeline-card" style="border-left-color: #22c55e;">
+                    <h4>Semana 14 (11/01 a 16/01/2027) <span class="badge" style="color: #22c55e;">Reta Final & Simulados</span></h4>
+                    <ul>
+                        <li><strong>Foco:</strong> Revisão Geral e Treino de Estudos de Caso (Discursiva)[cite: 26, 27].</li>
+                        <li><strong>Meta:</strong> Baterias de questões FCC e redação de estudos de caso práticos para a prova de 17/01[cite: 28].</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 3: CADERNO DE ERROS -->
+        <div id="errors" class="tab-content">
+            <div class="card">
+                <h2>Caderno de Erros Interativo</h2>
+                <p>Anote aqui as questões que errar para revisar ativamente:</p>
+                <div class="form-group">
+                    <label>Matéria / Assunto:</label>
+                    <input type="text" id="errSubject" placeholder="Ex: Segurança da Informação - Criptografia">
+                </div>
+                <div class="form-group">
+                    <label>O que você errou / Pegadinha da Banca:</label>
+                    <textarea id="errDesc" rows="3" placeholder="Descreva o conceito que confundiu..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>A Justificativa Correta:</label>
+                    <textarea id="errCorrect" rows="3" placeholder="Qual é a regra ou teoria correta?"></textarea>
+                </div>
+                <button class="btn" onclick="addError()">Adicionar ao Caderno</button>
+            </div>
+
+            <div class="card">
+                <h2>Erros Registrados</h2>
+                <table id="errorTable">
+                    <thead>
+                        <tr>
+                            <th>Matéria</th>
+                            <th>O Erro / Pegadinha</th>
+                            <th>Justificativa Correta</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ABA 4: SIMULADOS -->
+        <div id="simulados" class="tab-content">
+            <div class="card">
+                <h2>Controle de Evolução dos Simulados</h2>
+                <div class="form-group">
+                    <label>Data / Simulado:</label>
+                    <input type="text" id="simName" placeholder="Ex: Simulado 01 - FCC">
+                </div>
+                <div class="form-group">
+                    <label>Acertos Objetiva (de 70):</label>
+                    <input type="number" id="simScore" placeholder="Ex: 52">
+                </div>
+                <div class="form-group">
+                    <label>Nota Discursiva / Estudo de Caso (de 100):</label>
+                    <input type="number" id="simDisc" placeholder="Ex: 80">
+                </div>
+                <button class="btn" onclick="addSimulado()">Salvar Desempenho</button>
+            </div>
+
+            <div class="card">
+                <h2>Histórico de Desempenho</h2>
+                <table id="simTable">
+                    <thead>
+                        <tr>
+                            <th>Simulado</th>
+                            <th>Acertos Objetiva</th>
+                            <th>Aproveitamento</th>
+                            <th>Nota Discursiva</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ABA 5: ROTINA DIÁRIA -->
+        <div id="dailyroutine" class="tab-content">
+            <div class="card">
+                <h2>Estrutura Diária de 7 Horas Líquidas</h2>
+                <ul>
+                    <li><strong>30 min:</strong> Revisão Ativa de Entrada (Flashcards / Caderno de Erros)</li>
+                    <li><strong>2,5h:</strong> Estudo Teórico da Matéria Base 1 da Semana</li>
+                    <li><strong>2,5h:</strong> Estudo Teórico da Matéria Complementar da Semana</li>
+                    <li><strong>1,0h:</strong> Resolução de Questões da Banca FCC + Caderno de Erros</li>
+                    <li><strong>Bônus / Alternado:</strong> Redação e estruturação de Estudos de Caso práticos de TI</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Checklist Logic
+        const checkboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+        function updateProgress() {
+            let total = checkboxes.length;
+            let checked = 0;
+            checkboxes.forEach((cb, index) => {
+                if (cb.checked) {
+                    checked++;
+                    localStorage.setItem(`tce_ti_full_item_${index}`, 'true');
+                } else {
+                    localStorage.setItem(`tce_ti_full_item_${index}`, 'false');
+                }
+            });
+            let percentage = Math.round((checked / total) * 100);
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressText').innerText = `Progresso Total: ${percentage}% (${checked}/${total} tópicos concluídos)`;
+        }
+        checkboxes.forEach((cb, index) => {
+            if (localStorage.getItem(`tce_ti_full_item_${index}`) === 'true') cb.checked = true;
+            cb.addEventListener('change', updateProgress);
+        });
+        updateProgress();
+
+        // Caderno de Erros Logic
+        let errors = JSON.parse(localStorage.getItem('tce_errors') || '[]');
+        function renderErrors() {
+            let tbody = document.querySelector('#errorTable tbody');
+            tbody.innerHTML = '';
+            errors.forEach((err, index) => {
+                tbody.innerHTML += `<tr>
+                    <td><b>${err.subject}</b></td>
+                    <td>${err.desc}</td>
+                    <td>${err.correct}</td>
+                    <td><button class="delete-btn" onclick="deleteError(${index})">Excluir</button></td>
+                </tr>`;
+            });
+            localStorage.setItem('tce_errors', JSON.stringify(errors));
+        }
+        function addError() {
+            let sub = document.getElementById('errSubject').value;
+            let desc = document.getElementById('errDesc').value;
+            let correct = document.getElementById('errCorrect').value;
+            if(!sub || !correct) return alert('Preencha ao menos a matéria e a justificativa!');
+            errors.push({subject: sub, desc: desc, correct: correct});
+            document.getElementById('errSubject').value = '';
+            document.getElementById('errDesc').value = '';
+            document.getElementById('errCorrect').value = '';
+            renderErrors();
+        }
+        function deleteError(index) {
+            errors.splice(index, 1);
+            renderErrors();
+        }
+        renderErrors();
+
+        // Simulados Logic
+        let simulados = JSON.parse(localStorage.getItem('tce_simulados') || '[]');
+        function renderSimulados() {
+            let tbody = document.querySelector('#simTable tbody');
+            tbody.innerHTML = '';
+            simulados.forEach((sim, index) => {
+                let perc = Math.round((sim.score / 70) * 100);
+                tbody.innerHTML += `<tr>
+                    <td><b>${sim.name}</b></td>
+                    <td>${sim.score} / 70</td>
+                    <td>${perc}%</td>
+                    <td>${sim.disc} / 100</td>
+                    <td><button class="delete-btn" onclick="deleteSimulado(${index})">Excluir</button></td>
+                </tr>`;
+            });
+            localStorage.setItem('tce_simulados', JSON.stringify(simulados));
+        }
+        function addSimulado() {
+            let name = document.getElementById('simName').value;
+            let score = document.getElementById('simScore').value;
+            let disc = document.getElementById('simDisc').value;
+            if(!name || !score) return alert('Preencha o nome do simulado e os acertos!');
+            simulados.push({name: name, score: Number(score), disc: Number(disc) || 0});
+            document.getElementById('simName').value = '';
+            document.getElementById('simScore').value = '';
+            document.getElementById('simDisc').value = '';
+            renderSimulados();
+        }
+        function deleteSimulado(index) {
+            simulados.splice(index, 1);
+            renderSimulados();
+        }
+        renderSimulados();
+    </script>
+</body>
+</html>
