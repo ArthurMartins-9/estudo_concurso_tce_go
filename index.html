@@ -6,8 +6,8 @@
     <title>Painel Completo: TCE-GO (Técnico de TI)</title>
     <style>
         :root {
-            --primary: #f97316;       /* Laranja vibrante */
-            --primary-dark: #c2410c;  /* Laranja escuro */
+            --primary: #f97316;       /* Cor principal padrão (Laranja) */
+            --primary-dark: #c2410c;  /* Cor principal escura */
             --bg-color: #0f172a;      /* Fundo escuro (Slate 900) */
             --card-bg: #1e293b;       /* Fundo dos cards (Slate 800) */
             --text-main: #f8fafc;     /* Texto claro */
@@ -27,7 +27,7 @@
         }
 
         header {
-            background: linear-gradient(135deg, var(--primary-dark), #ea580c);
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
             color: white;
             padding: 2rem 1rem;
             text-align: center;
@@ -49,6 +49,38 @@
             max-width: 1100px;
             margin: 2rem auto;
             padding: 0 1rem;
+        }
+
+        /* Seletor de Cores Bar */
+        .color-picker-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            background: var(--card-bg);
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .color-picker-bar span {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--text-muted);
+        }
+
+        .color-btn {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.15);
         }
 
         .tabs {
@@ -101,7 +133,7 @@
         }
 
         h3 {
-            color: #fb923c;
+            color: var(--primary);
             margin-top: 1.2rem;
             margin-bottom: 0.5rem;
             font-size: 1.1rem;
@@ -189,7 +221,7 @@
 
         .timeline-card span.badge {
             background-color: #334155;
-            color: #fb923c;
+            color: var(--primary);
             padding: 0.2rem 0.6rem;
             border-radius: 4px;
             font-size: 0.8rem;
@@ -215,7 +247,7 @@
             display: block;
             margin-bottom: 0.4rem;
             font-weight: bold;
-            color: #fb923c;
+            color: var(--primary);
             font-size: 0.9rem;
         }
 
@@ -260,7 +292,7 @@
 
         th {
             background-color: #334155;
-            color: #fb923c;
+            color: var(--primary);
         }
 
         .delete-btn {
@@ -282,6 +314,16 @@
     </header>
 
     <div class="container">
+        <!-- SELETOR DE CORES -->
+        <div class="color-picker-bar">
+            <span>Tema do Painel:</span>
+            <div class="color-btn" style="background-color: #f97316;" onclick="setTheme('laranja', '#f97316', '#c2410c')" title="Laranja"></div>
+            <div class="color-btn" style="background-color: #3b82f6;" onclick="setTheme('azul', '#3b82f6', '#1d4ed8')" title="Azul"></div>
+            <div class="color-btn" style="background-color: #22c55e;" onclick="setTheme('verde', '#22c55e', '#15803d')" title="Verde"></div>
+            <div class="color-btn" style="background-color: #ef4444;" onclick="setTheme('vermelho', '#ef4444', '#b91c1c')" title="Vermelho"></div>
+            <div class="color-btn" style="background-color: #f8fafc;" onclick="setTheme('branco', '#f8fafc', '#cbd5e1')" title="Branco"></div>
+        </div>
+
         <!-- Navegação por Abas -->
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('checklist')">Checklist Oficial</button>
@@ -589,6 +631,25 @@
     </div>
 
     <script>
+        // Lógica de Cores Personalizadas
+        function setTheme(themeName, primaryColor, primaryDarkColor) {
+            document.documentElement.style.setProperty('--primary', primaryColor);
+            document.documentElement.style.setProperty('--primary-dark', primaryDarkColor);
+            localStorage.setItem('tce_theme', themeName);
+            localStorage.setItem('tce_primary', primaryColor);
+            localStorage.setItem('tce_primary_dark', primaryDarkColor);
+        }
+
+        // Carregar tema salvo
+        window.addEventListener('DOMContentLoaded', () => {
+            let savedPrimary = localStorage.getItem('tce_primary');
+            let savedDark = localStorage.getItem('tce_primary_dark');
+            if(savedPrimary && savedDark) {
+                document.documentElement.style.setProperty('--primary', savedPrimary);
+                document.documentElement.style.setProperty('--primary-dark', savedDark);
+            }
+        });
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
